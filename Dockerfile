@@ -38,5 +38,9 @@ EXPOSE 8000
 # Set entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
 
+# Copy startup script
+COPY startup.sh /startup.sh
+RUN chmod +x /startup.sh
+
 # Default command
-CMD ["gunicorn", "bennie_site.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120", "--access-logfile", "-", "--error-logfile", "-"]
+CMD ["/startup.sh"]
