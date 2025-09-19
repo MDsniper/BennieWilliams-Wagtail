@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">{{ page.hero_title }}</h1>
+            <p class="hero-subtitle">{{ page.hero_subtitle }}</p>
+            {% if page.hero_cta_text and page.hero_cta_link %}
+            <a href="{{ page.hero_cta_link }}" class="btn btn-gold btn-lg">{{ page.hero_cta_text }}</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Intro Section -->
+{% if page.intro %}
+<section class="section">
+    <div class="container">
+        <div class="intro-text">
+            {{ page.intro|richtext }}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Featured Content -->
+<section class="section section-alt">
+    <div class="container">
+        <div class="grid grid-3">
+            <!-- Featured Blog Post -->
+            {% if page.featured_blog_post %}
+            <div class="card">
+                {% if page.featured_blog_post.featured_image %}
+                {% image page.featured_blog_post.featured_image fill-400x250 as img %}
+                <img src="{{ img.url }}" alt="{{ img.alt }}" class="card-image">
+                {% endif %}
+                <div class="card-body">
+                    <span class="card-label">Featured Post</span>
+                    <h3 class="card-title">
+                        <a href="{% pageurl page.featured_blog_post %}">{{ page.featured_blog_post.title }}</a>
+                    </h3>
+                    <p class="card-text">{{ page.featured_blog_post.intro }}</p>
+                    <a href="{% pageurl page.featured_blog_post %}" class="btn btn-outline">Read More</a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Recent Posts -->
+            {% if recent_posts %}
+            {% for post in recent_posts %}
+            <div class="card">
+                {% if post.featured_image %}
+                {% image post.featured_image fill-400x250 as img %}
+                <img src="{{ img.url }}" alt="{{ img.alt }}" class="card-image">
+                {% endif %}
+                <div class="card-body">
+                    <span class="card-label">{{ post.date|date:"M d, Y" }}</span>
+                    <h3 class="card-title">
+                        <a href="{% pageurl post %}">{{ post.title }}</a>
+                    </h3>
+                    <p class="card-text">{{ post.intro|truncatewords:20 }}</p>
+                    <a href="{% pageurl post %}" class="btn btn-outline">Read More</a>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Courses -->
+{% if featured_courses %}
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Featured Courses</h2>
+        <div class="grid grid-3">
+            {% for course in featured_courses %}
+            <div class="card card-course">
+                {% if course.image %}
+                {% image course.image fill-400x250 as img %}
+                <img src="{{ img.url }}" alt="{{ course.title }}" class="card-image">
+                {% endif %}
+                <div class="card-body">
+                    <h3 class="card-title">{{ course.title }}</h3>
+                    {% if course.subtitle %}
+                    <p class="card-subtitle">{{ course.subtitle }}</p>
+                    {% endif %}
+                    <p class="card-text">{{ course.description|richtext|truncatewords_html:30 }}</p>
+                    <div class="card-footer">
+                        <span class="course-price">${{ course.price }}</span>
+                        <a href="{{ course.gumroad_link }}" target="_blank" rel="noopener" class="btn btn-primary">Enroll Now</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Body Content -->
+{% if page.body %}
+<section class="section">
+    <div class="container">
+        <div class="content">
+            {% for block in page.body %}
+                {% include_block block %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Section -->
+<section class="section section-cta">
+    <div class="container">
+        <div class="cta-box">
+            <h2>Ready to Transform Your Business with AI?</h2>
+            <p>Let's discuss how artificial intelligence can help you achieve your goals.</p>
+            <a href="/contact/" class="btn btn-gold btn-lg">Get Started</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block meta_description %}{{ page.intro }}{% endblock %}
+
+{% block content %}
+<article class="blog-post">
+    <div class="container">
+        <!-- Article Header -->
+        <header class="blog-post-header">
+            <div class="blog-post-meta">
+                <time datetime="{{ page.date|date:'Y-m-d' }}">{{ page.date|date:"F d, Y" }}</time>
+                <span>by {{ page.author }}</span>
+            </div>
+            <h1 class="blog-post-title">{{ page.title }}</h1>
+            <p class="blog-post-intro">{{ page.intro }}</p>
+            {% if page.tags.all %}
+            <div class="blog-post-tags">
+                {% for tag in page.tags.all %}
+                <a href="/blog/?tag={{ tag.slug }}" class="tag">{{ tag }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </header>
+
+        <!-- Featured Image -->
+        {% if page.featured_image %}
+        <div class="blog-post-image">
+            {% image page.featured_image width-1200 as img %}
+            <img src="{{ img.url }}" alt="{{ img.alt }}">
+        </div>
+        {% endif %}
+
+        <!-- Article Content -->
+        <div class="blog-post-content">
+            <div class="content">
+                {% for block in page.body %}
+                    {% include_block block %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Share Section -->
+        <div class="blog-post-share">
+            <h3>Share this article</h3>
+            <div class="share-buttons">
+                <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ page.title|urlencode }}"
+                   target="_blank" rel="noopener" class="share-btn share-twitter">
+                    Share on Twitter
+                </a>
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}"
+                   target="_blank" rel="noopener" class="share-btn share-linkedin">
+                    Share on LinkedIn
+                </a>
+                <a href="mailto:?subject={{ page.title|urlencode }}&body={{ request.build_absolute_uri }}"
+                   class="share-btn share-email">
+                    Share via Email
+                </a>
+            </div>
+        </div>
+
+        <!-- Related Posts -->
+        {% if related_posts %}
+        <div class="related-posts">
+            <h3>Related Articles</h3>
+            <div class="grid grid-3">
+                {% for post in related_posts %}
+                <div class="card">
+                    {% if post.featured_image %}
+                    {% image post.featured_image fill-400x250 as img %}
+                    <img src="{{ img.url }}" alt="{{ img.alt }}" class="card-image">
+                    {% endif %}
+                    <div class="card-body">
+                        <span class="card-label">{{ post.date|date:"M d, Y" }}</span>
+                        <h4 class="card-title">
+                            <a href="{% pageurl post %}">{{ post.title }}</a>
+                        </h4>
+                        <p class="card-text">{{ post.intro|truncatewords:20 }}</p>
+                        <a href="{% pageurl post %}" class="btn btn-outline btn-sm">Read More</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Newsletter CTA -->
+        <div class="blog-post-cta">
+            <h3>Get AI Insights Delivered</h3>
+            <p>Subscribe to receive weekly updates on AI trends, strategies, and implementation tips.</p>
+            <form class="cta-form" action="/newsletter-signup/" method="POST">
+                {% csrf_token %}
+                <input type="email" name="email" placeholder="Your email address" required>
+                <button type="submit" class="btn btn-primary">Subscribe</button>
+            </form>
+        </div>
+    </div>
+</article>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>{{ page.title }}</h1>
+        {% if page.intro %}
+        <div class="intro">{{ page.intro|richtext }}</div>
+        {% endif %}
+    </div>
+
+    <div class="blog-layout">
+        <div class="blog-main">
+            <div class="blog-grid">
+                {% for post in blog_pages %}
+                <article class="blog-card">
+                    {% if post.featured_image %}
+                    {% image post.featured_image fill-600x400 as img %}
+                    <a href="{% pageurl post %}">
+                        <img src="{{ img.url }}" alt="{{ img.alt }}" class="blog-card-image">
+                    </a>
+                    {% endif %}
+                    <div class="blog-card-body">
+                        <div class="blog-meta">
+                            <time datetime="{{ post.date|date:'Y-m-d' }}">{{ post.date|date:"F d, Y" }}</time>
+                            <span class="blog-author">by {{ post.author }}</span>
+                        </div>
+                        <h2 class="blog-card-title">
+                            <a href="{% pageurl post %}">{{ post.title }}</a>
+                        </h2>
+                        <p class="blog-card-excerpt">{{ post.intro }}</p>
+                        <div class="blog-card-footer">
+                            <a href="{% pageurl post %}" class="btn btn-outline">Read More →</a>
+                            {% if post.tags.all %}
+                            <div class="blog-tags">
+                                {% for tag in post.tags.all %}
+                                <a href="/blog/?tag={{ tag.slug }}" class="tag">{{ tag }}</a>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+                {% empty %}
+                <p>No blog posts yet. Check back soon!</p>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if blog_pages.has_other_pages %}
+            <nav class="pagination" aria-label="Blog pagination">
+                <ul class="pagination-list">
+                    {% if blog_pages.has_previous %}
+                    <li class="pagination-item">
+                        <a href="?page={{ blog_pages.previous_page_number }}" class="pagination-link">← Previous</a>
+                    </li>
+                    {% endif %}
+
+                    {% for page_num in blog_pages.paginator.page_range %}
+                        {% if page_num == blog_pages.number %}
+                        <li class="pagination-item active">
+                            <span class="pagination-link">{{ page_num }}</span>
+                        </li>
+                        {% else %}
+                        <li class="pagination-item">
+                            <a href="?page={{ page_num }}" class="pagination-link">{{ page_num }}</a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if blog_pages.has_next %}
+                    <li class="pagination-item">
+                        <a href="?page={{ blog_pages.next_page_number }}" class="pagination-link">Next →</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="blog-sidebar">
+            <div class="sidebar-widget">
+                <h3>Popular Tags</h3>
+                <div class="tag-cloud">
+                    {% for tag, count in tags %}
+                    <a href="/blog/?tag={{ tag }}" class="tag-item">
+                        {{ tag }} <span class="tag-count">({{ count }})</span>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="sidebar-widget">
+                <h3>Newsletter</h3>
+                <p>Subscribe for weekly AI insights and tips.</p>
+                <form class="sidebar-form" action="/newsletter-signup/" method="POST">
+                    {% csrf_token %}
+                    <input type="email" name="email" placeholder="Your email" required>
+                    <button type="submit" class="btn btn-primary btn-block">Subscribe</button>
+                </form>
+            </div>
+
+            <div class="sidebar-widget">
+                <h3>AI Consulting</h3>
+                <p>Need help implementing AI in your business?</p>
+                <a href="/services/" class="btn btn-gold btn-block">Learn More</a>
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}

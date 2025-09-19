@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>{{ page.title }}</h1>
+        {% if page.intro %}
+        <div class="intro-text">{{ page.intro|richtext }}</div>
+        {% endif %}
+    </div>
+
+    <div class="content">
+        {% for block in page.body %}
+            {% include_block block %}
+        {% endfor %}
+    </div>
+
+    {% if page.consultation_price %}
+    <div class="consultation-box">
+        <h3>Consultation Pricing</h3>
+        <p class="price-display">{{ page.consultation_price }}</p>
+        <a href="/contact/" class="btn btn-gold">Schedule Consultation</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
