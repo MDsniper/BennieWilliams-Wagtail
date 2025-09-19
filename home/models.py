@@ -216,7 +216,6 @@ class BlogPage(Page):
         return context
 
 
-@register_snippet
 class Course(models.Model):
     """Course snippet for courses listing"""
     title = models.CharField(max_length=255)

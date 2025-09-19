@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  faceswap-app:
+    image: registry.hf.space/sdiffu1024-faceswapall:latest
+    container_name: faceswap-app
+    platform: linux/amd64
+    ports:
+      - "7861:7860"
+    command: python app.py
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Create persistent storage for uploaded files and outputs
+      - faceswap_data:/app/data
+      - faceswap_outputs:/app/outputs
+      - faceswap_temp:/tmp
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7860/", "||", "exit", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 2G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  faceswap_data:
+    driver: local
+  faceswap_outputs:
+    driver: local
+  faceswap_temp:
+    driver: local
