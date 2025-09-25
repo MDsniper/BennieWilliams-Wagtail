@@ -1,0 +1,35 @@
+{% load wagtailimages_tags %}
+
+<div class="portfolio-item">
+    {% if value.image %}
+        {% image value.image fill-400x300 as portfolio_image %}
+        <div class="portfolio-image">
+            <img src="{{ portfolio_image.url }}" alt="{{ value.title }}" />
+        </div>
+    {% endif %}
+
+    <div class="portfolio-content">
+        <h3 class="portfolio-title">{{ value.title }}</h3>
+
+        <div class="portfolio-description">
+            {{ value.description }}
+        </div>
+
+        {% if value.technologies %}
+            <div class="portfolio-technologies">
+                {% for tech in value.technologies %}
+                    <span class="tech-tag">{{ tech }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="portfolio-links">
+            {% if value.project_link %}
+                <a href="{{ value.project_link }}" class="btn btn-primary" target="_blank">View Project</a>
+            {% endif %}
+            {% if value.github_link %}
+                <a href="{{ value.github_link }}" class="btn btn-secondary" target="_blank">GitHub</a>
+            {% endif %}
+        </div>
+    </div>
+</div>

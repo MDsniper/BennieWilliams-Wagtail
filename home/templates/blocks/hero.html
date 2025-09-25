@@ -1,0 +1,24 @@
+{% load wagtailimages_tags %}
+
+<section class="hero-section">
+    <div class="hero-content">
+        {% if value.heading %}
+            <h1 class="hero-heading">{{ value.heading }}</h1>
+        {% endif %}
+
+        {% if value.subheading %}
+            <p class="hero-subheading">{{ value.subheading }}</p>
+        {% endif %}
+
+        {% if value.cta_text and value.cta_link %}
+            <a href="{{ value.cta_link }}" class="hero-cta">{{ value.cta_text }}</a>
+        {% endif %}
+    </div>
+
+    {% if value.image %}
+        {% image value.image fill-1920x1080 as hero_image %}
+        <div class="hero-image">
+            <img src="{{ hero_image.url }}" alt="{{ value.heading }}" />
+        </div>
+    {% endif %}
+</section>

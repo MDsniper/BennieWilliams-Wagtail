@@ -1,0 +1,37 @@
+{% load wagtailimages_tags %}
+
+<section class="about-section">
+    {% if value.heading %}
+        <h2 class="about-heading">{{ value.heading }}</h2>
+    {% endif %}
+
+    <div class="about-container">
+        <div class="about-content">
+            {{ value.content }}
+        </div>
+
+        {% if value.image %}
+            {% image value.image fill-500x500 as about_image %}
+            <div class="about-image">
+                <img src="{{ about_image.url }}" alt="{{ value.heading }}" />
+            </div>
+        {% endif %}
+    </div>
+
+    {% if value.skills %}
+        <div class="skills-section">
+            <h3>Skills</h3>
+            <div class="skills-list">
+                {% for skill in value.skills %}
+                    <div class="skill-item">
+                        <span class="skill-name">{{ skill.name }}</span>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: {{ skill.level }}%;"></div>
+                        </div>
+                        <span class="skill-level">{{ skill.level }}%</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</section>

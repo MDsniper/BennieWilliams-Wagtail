@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-servicespage{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1>{{ page.title }}</h1>
+
+    {% if page.intro %}
+        <div class="intro">
+            {{ page.intro|richtext }}
+        </div>
+    {% endif %}
+
+    <div class="services-grid">
+        <div class="service-card" id="it-strategy">
+            <span class="service-icon">🎯</span>
+            <h2>IT Strategy Consulting</h2>
+            <p>Align technology with business objectives through strategic planning and roadmap development.</p>
+            <ul>
+                <li>Digital transformation roadmaps</li>
+                <li>Technology assessment and optimization</li>
+                <li>IT governance and policy development</li>
+                <li>Strategic planning and execution</li>
+            </ul>
+        </div>
+
+        <div class="service-card" id="ai-training">
+            <span class="service-icon">🤖</span>
+            <h2>AI & LLM Training</h2>
+            <p>Master the latest in artificial intelligence and large language models with hands-on training.</p>
+            <ul>
+                <li>LLM fundamentals and advanced techniques</li>
+                <li>Custom AI training programs</li>
+                <li>Hands-on workshops and labs</li>
+                <li>AI implementation best practices</li>
+            </ul>
+        </div>
+
+        <div class="service-card" id="prompt-engineering">
+            <span class="service-icon">✨</span>
+            <h2>Prompt Engineering</h2>
+            <p>Optimize AI interactions with advanced prompt engineering techniques and best practices.</p>
+            <ul>
+                <li>Prompt optimization strategies</li>
+                <li>Custom prompt library development</li>
+                <li>AI workflow design</li>
+                <li>Performance tuning and testing</li>
+            </ul>
+        </div>
+
+        <div class="service-card" id="automation">
+            <span class="service-icon">⚡</span>
+            <h2>AI & Automation</h2>
+            <p>Streamline operations with intelligent automation solutions powered by cutting-edge AI.</p>
+            <ul>
+                <li>Process automation assessment</li>
+                <li>AI-powered workflow optimization</li>
+                <li>RPA implementation</li>
+                <li>Integration with existing systems</li>
+            </ul>
+        </div>
+
+        <div class="service-card" id="vmware">
+            <span class="service-icon">☁️</span>
+            <h2>VMware Virtualization</h2>
+            <p>Expert VMware deployment, optimization, and management for enterprise environments.</p>
+            <ul>
+                <li>vSphere architecture and design</li>
+                <li>Performance optimization</li>
+                <li>Disaster recovery planning</li>
+                <li>Migration and upgrade services</li>
+            </ul>
+        </div>
+
+        <div class="service-card" id="digital-transformation">
+            <span class="service-icon">🚀</span>
+            <h2>Digital Transformation</h2>
+            <p>Navigate your digital journey with comprehensive transformation strategies and implementation.</p>
+            <ul>
+                <li>Digital maturity assessment</li>
+                <li>Cloud migration strategies</li>
+                <li>Modern application development</li>
+                <li>Change management and training</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="cta-section">
+        <h2>Ready to Get Started?</h2>
+        <p>Let's discuss how these services can benefit your organization.</p>
+        <a href="/contact/" class="btn btn-primary">Schedule a Consultation</a>
+    </div>
+</div>
+
+<style>
+.intro {
+    font-size: 1.125rem;
+    color: #4b5563;
+    margin-bottom: 3rem;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.service-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+.service-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.service-card h2 {
+    color: #1e293b;
+    margin-bottom: 1rem;
+}
+
+.service-card p {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+}
+
+.service-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.service-card li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.service-card li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #10b981;
+    font-weight: bold;
+}
+
+.cta-section {
+    text-align: center;
+    padding: 3rem;
+    background: linear-gradient(135deg, #2563eb 0%, #14b8a6 100%);
+    border-radius: 12px;
+    color: white;
+    margin-top: 3rem;
+}
+
+.cta-section h2 {
+    margin-bottom: 1rem;
+}
+
+.cta-section p {
+    margin-bottom: 2rem;
+    opacity: 0.95;
+}
+
+.btn-primary {
+    background: white;
+    color: #2563eb;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 600;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+</style>
+{% endblock %}
