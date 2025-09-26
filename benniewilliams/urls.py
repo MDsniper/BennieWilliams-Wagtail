@@ -7,12 +7,16 @@ from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
 from search import views as search_views
+from . import health_check
 
 urlpatterns = [
     path("django-admin/", admin.site.urls),
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),
+    # Health check endpoints for monitoring and deployment
+    path("health/", health_check.health_check, name="health_check"),
+    path("ready/", health_check.readiness_check, name="readiness_check"),
 ]
 
 

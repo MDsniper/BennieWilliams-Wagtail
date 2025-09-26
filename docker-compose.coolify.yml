@@ -1,0 +1,135 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      # Django Core Settings
+      - DJANGO_SETTINGS_MODULE=benniewilliams.settings.production
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=False
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-benniewilliams.com,www.benniewilliams.com}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS:-https://benniewilliams.com,https://www.benniewilliams.com}
+
+      # Database Configuration
+      - DATABASE_URL=${DATABASE_URL:-postgresql://benniewilliams:${DB_PASSWORD:-changeme}@db:5432/${DB_NAME:-benniewilliams}}
+      - DB_NAME=${DB_NAME:-benniewilliams}
+      - DB_USER=${DB_USER:-benniewilliams}
+      - DB_PASSWORD=${DB_PASSWORD:-changeme}
+      - DB_HOST=db
+      - DB_PORT=5432
+
+      # Cache Configuration
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+
+      # Security Settings (Production)
+      - SECURE_SSL_REDIRECT=${SECURE_SSL_REDIRECT:-True}
+      - SESSION_COOKIE_SECURE=${SESSION_COOKIE_SECURE:-True}
+      - CSRF_COOKIE_SECURE=${CSRF_COOKIE_SECURE:-True}
+
+      # Admin User (Initial Setup)
+      - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME:-admin}
+      - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL:-admin@benniewilliams.com}
+      - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD:-changeme}
+
+      # Static/Media Collection
+      - DJANGO_COLLECT_STATIC=true
+
+      # Wagtail Settings
+      - WAGTAIL_SITE_NAME=${WAGTAIL_SITE_NAME:-Bennie Williams Consulting}
+      - WAGTAILADMIN_BASE_URL=${WAGTAILADMIN_BASE_URL:-https://benniewilliams.com}
+
+      # Email Configuration (Optional)
+      - EMAIL_BACKEND=${EMAIL_BACKEND:-django.core.mail.backends.console.EmailBackend}
+      - EMAIL_HOST=${EMAIL_HOST:-}
+      - EMAIL_PORT=${EMAIL_PORT:-587}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS:-True}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER:-}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD:-}
+      - DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL:-noreply@benniewilliams.com}
+
+    ports:
+      - "${PORT:-8000}:8000"
+    volumes:
+      - media_data:/app/media
+      - static_data:/app/static
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=${DB_NAME:-benniewilliams}
+      - POSTGRES_USER=${DB_USER:-benniewilliams}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-benniewilliams} -d ${DB_NAME:-benniewilliams}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    volumes:
+      - redis_data:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  media_data:
+    driver: local
+  static_data:
+    driver: local
+
+networks:
+  default:
+    driver: bridge

@@ -61,9 +61,9 @@ ENV PYTHONUNBUFFERED=1 \
 # Collect static files
 RUN python manage.py collectstatic --noinput --clear || true
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8000/health/')" || exit 1
+# Health check - using curl instead of requests for lighter footprint
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8000/health/ || exit 1
 
 # Port used by this container to serve HTTP
 EXPOSE 8000
