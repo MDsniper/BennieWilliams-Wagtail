@@ -1,0 +1,63 @@
+# Coolify Deployment Configuration
+# Replace your existing benniewilliams site with this Wagtail version
+
+version: '3.8'
+
+services:
+  web:
+    image: ghcr.io/mdsniper/benniewilliams-wagtail:latest
+    environment:
+      - DJANGO_SETTINGS_MODULE=benniewilliams.settings.production
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-benniewilliams.com,www.benniewilliams.com}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - DEBUG=False
+      - SECURE_SSL_REDIRECT=True
+      - SESSION_COOKIE_SECURE=True
+      - CSRF_COOKIE_SECURE=True
+    ports:
+      - "8000:8000"
+    volumes:
+      - media:/app/media
+      - static:/app/static
+    depends_on:
+      - db
+      - redis
+    command: /app/docker-entrypoint.sh
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-benniewilliams}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
+  media:
+  static:
