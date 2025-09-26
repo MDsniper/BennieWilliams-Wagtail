@@ -24,14 +24,11 @@ if os.environ.get('DATABASE_URL'):
         )
     }
 else:
+    # Use SQLite as fallback if no DATABASE_URL is provided
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME', 'benniewilliams'),
-            'USER': os.environ.get('DB_USER', 'benniewilliams'),
-            'PASSWORD': os.environ.get('DB_PASSWORD', 'changeme'),
-            'HOST': os.environ.get('DB_HOST', 'localhost'),
-            'PORT': os.environ.get('DB_PORT', '5432'),
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
 
